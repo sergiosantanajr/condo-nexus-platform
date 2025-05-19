@@ -1,5 +1,5 @@
 
-import { Building, FileText, Shield, Tool, Users, Phone } from "lucide-react";
+import { Building, FileText, Shield, Wrench, Users, Phone } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -23,7 +23,7 @@ const services = [
     link: "/servicos/assembleias"
   },
   {
-    icon: <Tool className="h-10 w-10 text-brand-teal" />,
+    icon: <Wrench className="h-10 w-10 text-brand-teal" />,
     title: "Manutenção Preventiva",
     description: "Planejamento e execução de manutenções para preservar o patrimônio e evitar problemas.",
     link: "/servicos/manutencao"
