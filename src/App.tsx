@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import ServicosPage from "./pages/ServicosPage";
 
 const queryClient = new QueryClient();
 
@@ -16,31 +17,30 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          {/* Main Website Routes */}
+          {/* Rotas do Site Institucional */}
           <Route path="/" element={<Index />} />
-          <Route path="/quemsomos" element={<Index />} /> {/* Placeholder - to be implemented */}
-          <Route path="/servicos" element={<Index />} /> {/* Placeholder - to be implemented */}
-          <Route path="/servicos/administracao" element={<Index />} /> {/* Placeholder - to be implemented */}
-          <Route path="/servicos/consultoria" element={<Index />} /> {/* Placeholder - to be implemented */}
-          <Route path="/servicos/manutencao" element={<Index />} /> {/* Placeholder - to be implemented */}
-          <Route path="/servicos/assembleias" element={<Index />} /> {/* Placeholder - to be implemented */}
-          <Route path="/servicos/seguranca" element={<Index />} /> {/* Placeholder - to be implemented */}
-          <Route path="/servicos/atendimento" element={<Index />} /> {/* Placeholder - to be implemented */}
-          <Route path="/blog" element={<Index />} /> {/* Placeholder - to be implemented */}
-          <Route path="/contato" element={<Index />} /> {/* Placeholder - to be implemented */}
-          <Route path="/privacidade" element={<Index />} /> {/* Placeholder - to be implemented */}
-          <Route path="/termos" element={<Index />} /> {/* Placeholder - to be implemented */}
+          <Route path="/quemsomos" element={<Index />} /> {/* Placeholder - a ser implementado */}
+          <Route path="/servicos" element={<ServicosPage />} />
+          <Route path="/servicos/:tipo" element={<ServicosPage />} />
+          <Route path="/blog" element={<Index />} /> {/* Placeholder - a ser implementado */}
+          <Route path="/contato" element={<Index />} /> {/* Placeholder - a ser implementado */}
+          <Route path="/privacidade" element={<Index />} /> {/* Placeholder - a ser implementado */}
+          <Route path="/termos" element={<Index />} /> {/* Placeholder - a ser implementado */}
 
-          {/* Portal Routes */}
-          <Route path="/portal" element={<Index />} /> {/* Placeholder - to be implemented */}
-          <Route path="/portal/cadastro" element={<Index />} /> {/* Placeholder - to be implemented */}
-          <Route path="/portal/imoveis" element={<Index />} /> {/* Placeholder - to be implemented */}
-          <Route path="/portal/ajuda" element={<Index />} /> {/* Placeholder - to be implemented */}
+          {/* Rotas do Portal */}
+          <Route path="/portal" element={<Index />} /> {/* Placeholder - a ser implementado */}
+          <Route path="/portal/cadastro" element={<Index />} /> {/* Placeholder - a ser implementado */}
+          <Route path="/portal/imoveis" element={<Index />} /> {/* Placeholder - a ser implementado */}
+          <Route path="/portal/ajuda" element={<Index />} /> {/* Placeholder - a ser implementado */}
+          <Route path="/portal/tickets" element={<Index />} /> {/* Placeholder - a ser implementado */}
 
-          {/* Admin Routes */}
-          <Route path="/admin" element={<Index />} /> {/* Placeholder - to be implemented */}
+          {/* Rotas do Admin */}
+          <Route path="/admin" element={<Index />} /> {/* Placeholder - a ser implementado */}
+          <Route path="/admin/blog" element={<Index />} /> {/* Placeholder - a ser implementado */}
+          <Route path="/admin/tickets" element={<Index />} /> {/* Placeholder - a ser implementado */}
+          <Route path="/admin/imoveis" element={<Index />} /> {/* Placeholder - a ser implementado */}
 
-          {/* Catch-all route */}
+          {/* Rota para página não encontrada */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
