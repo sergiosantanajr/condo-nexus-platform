@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "@/hooks/use-toast";
 
 const AdminNavbar = () => {
   const navigate = useNavigate();
@@ -17,6 +18,10 @@ const AdminNavbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem("adminLoggedIn");
+    toast({
+      title: "Sessão encerrada",
+      description: "Você foi desconectado com sucesso"
+    });
     navigate("/admin");
   };
 

@@ -14,6 +14,9 @@ import PortalLogin from "./pages/PortalLogin";
 import PortalCadastro from "./pages/PortalCadastro";
 import PortalDashboard from "./pages/PortalDashboard";
 import PortalTickets from "./pages/PortalTickets";
+import BlogPage from "./pages/BlogPage";
+import BlogPostPage from "./pages/BlogPostPage";
+import ContatoPage from "./pages/ContatoPage";
 
 const queryClient = new QueryClient();
 
@@ -35,8 +38,9 @@ const App = () => (
           <Route path="/quemsomos" element={<Index />} /> {/* Placeholder - a ser implementado */}
           <Route path="/servicos" element={<ServicosPage />} />
           <Route path="/servicos/:tipo" element={<ServicosPage />} />
-          <Route path="/blog" element={<Index />} /> {/* Placeholder - a ser implementado */}
-          <Route path="/contato" element={<Index />} /> {/* Placeholder - a ser implementado */}
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:id" element={<BlogPostPage />} />
+          <Route path="/contato" element={<ContatoPage />} />
           <Route path="/privacidade" element={<Index />} /> {/* Placeholder - a ser implementado */}
           <Route path="/termos" element={<Index />} /> {/* Placeholder - a ser implementado */}
 

@@ -1,73 +1,107 @@
-# Welcome to your Lovable project
 
-## Project info
+# Nova Alternativa - Sistema de Gestão de Condomínios
 
-**URL**: https://lovable.dev/projects/b3460200-2085-4ce5-a33b-65196b489a88
+Este projeto é uma aplicação web desenvolvida com React para gestão de condomínios.
 
-## How can I edit this code?
+## ⚠️ IMPORTANTE: Este é um projeto React moderno
 
-There are several ways of editing your application.
+Este projeto utiliza tecnologias web modernas (React, Vite, etc.) e **NÃO É** uma aplicação PHP tradicional. Para executá-lo corretamente, você precisa seguir as instruções abaixo.
 
-**Use Lovable**
+## 📋 Requisitos
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/b3460200-2085-4ce5-a33b-65196b489a88) and start prompting.
+- Node.js versão 16.0 ou superior
+- NPM ou Yarn
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🚀 Instalação
 
-**Use your preferred IDE**
+1. Primeiro, instale as dependências:
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```bash
+npm install
+# ou
+yarn install
 ```
 
-**Edit a file directly in GitHub**
+2. Execute o projeto em modo de desenvolvimento:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+npm run dev
+# ou
+yarn dev
+```
 
-**Use GitHub Codespaces**
+3. Para compilar para produção:
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+```bash
+npm run build
+# ou
+yarn build
+```
 
-## What technologies are used for this project?
+4. Para servir a versão de produção:
 
-This project is built with:
+```bash
+npm run preview
+# ou
+yarn preview
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 📂 Estrutura do Projeto
 
-## How can I deploy this project?
+- `/src` - Código fonte da aplicação
+  - `/components` - Componentes React reutilizáveis
+  - `/pages` - Páginas da aplicação
+  - `/hooks` - Custom hooks
+  - `/lib` - Funções utilitárias
 
-Simply open [Lovable](https://lovable.dev/projects/b3460200-2085-4ce5-a33b-65196b489a88) and click on Share -> Publish.
+## 🌐 Deploy em Servidor Web Tradicional (Apache/Nginx)
 
-## Can I connect a custom domain to my Lovable project?
+Se você deseja hospedar este site em um servidor Apache ou Nginx tradicional:
 
-Yes, you can!
+1. Execute `npm run build` para gerar os arquivos estáticos
+2. Copie todo o conteúdo da pasta `dist` para a raiz do seu servidor web
+3. Configure seu servidor para servir `index.html` para todas as rotas (necessário para SPA - Single Page Application)
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Configuração para Nginx:
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+```nginx
+server {
+    listen 80;
+    server_name seu-dominio.com;
+    root /caminho/para/pasta/dist;
+    index index.html;
+    
+    location / {
+        try_files $uri $uri/ /index.html;
+    }
+}
+```
+
+### Configuração para Apache:
+
+Crie um arquivo `.htaccess` na raiz do seu site:
+
+```apache
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
+```
+
+Certifique-se de que o módulo `mod_rewrite` esteja habilitado no seu servidor Apache.
+
+## 📱 Funcionalidades
+
+- Site institucional com informações sobre serviços
+- Blog com artigos sobre gestão condominial
+- Portal para condôminos com acesso a serviços
+- Painel administrativo para gestão de conteúdo
+- Sistema de tickets para solicitações e reclamações
+
+## 📄 Licença
+
+Este projeto é proprietário e seu uso não é permitido sem autorização expressa.
