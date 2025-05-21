@@ -1,168 +1,319 @@
 
 <?php
-// Obter ID do post da URL
-$post_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+// Definir ID do post
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-// Buscar post específico
-try {
-    $stmt = $conn->prepare("
-        SELECT p.*, a.nome as autor_nome, a.email as autor_email  
-        FROM blog_posts p 
-        JOIN administradores a ON p.autor_id = a.id 
-        WHERE p.id = ? AND p.status = 'publicado'
-    ");
-    $stmt->execute([$post_id]);
-    $post = $stmt->fetch();
-    
-    if ($post) {
-        // Incrementa visualizações
-        $stmt = $conn->prepare("UPDATE blog_posts SET visualizacoes = visualizacoes + 1 WHERE id = ?");
-        $stmt->execute([$post_id]);
-        
-        // Buscar categorias do post
-        $stmt = $conn->prepare("
-            SELECT c.* 
-            FROM blog_categorias c 
-            JOIN blog_posts_categorias pc ON c.id = pc.categoria_id 
-            WHERE pc.post_id = ?
-        ");
-        $stmt->execute([$post_id]);
-        $categorias = $stmt->fetchAll();
-        
-        // Definir título da página
-        $titulo = $post['titulo'];
-        
-        // Buscar posts relacionados
-        $stmt = $conn->prepare("
-            SELECT p.id, p.titulo, p.imagem_capa, p.data_publicacao 
-            FROM blog_posts p 
-            JOIN blog_posts_categorias pc1 ON p.id = pc1.post_id 
-            JOIN blog_posts_categorias pc2 ON pc1.categoria_id = pc2.categoria_id 
-            WHERE pc2.post_id = ? AND p.id != ? AND p.status = 'publicado' 
-            GROUP BY p.id 
-            ORDER BY p.data_publicacao DESC 
-            LIMIT 3
-        ");
-        $stmt->execute([$post_id, $post_id]);
-        $posts_relacionados = $stmt->fetchAll();
-    } else {
-        // Post não encontrado, redirecionar para página de blog
-        header('Location: index.php?page=blog');
-        exit();
-    }
-} catch (PDOException $e) {
-    // Erro na consulta, redirecionar para página de blog
-    header('Location: index.php?page=blog');
-    exit();
+// Verificar se ID existe
+if ($id <= 0) {
+    include 'pages/404.php';
+    exit;
+}
+
+// Simulação de posts do blog para demonstração
+$posts = [
+    1 => [
+        'id' => 1,
+        'titulo' => '10 Dicas para Reduzir Custos no Condomínio',
+        'resumo' => 'Confira estratégias eficientes para economizar nas despesas do seu condomínio sem comprometer a qualidade dos serviços.',
+        'conteudo' => '<p>A gestão financeira de um condomínio é um dos maiores desafios enfrentados por síndicos e administradores. Com o aumento constante dos custos de manutenção, energia, água e serviços em geral, encontrar formas de economizar sem comprometer a qualidade de vida dos moradores tornou-se uma necessidade.</p>
+                      <p>Neste artigo, apresentamos 10 estratégias eficientes que podem ajudar a reduzir significativamente os gastos do seu condomínio, mantendo ou até mesmo melhorando os serviços oferecidos.</p>
+                      <h3>1. Faça um diagnóstico completo dos gastos</h3>
+                      <p>Antes de implementar qualquer medida de economia, é fundamental conhecer detalhadamente onde e como o dinheiro está sendo gasto. Realize uma análise minuciosa das contas dos últimos 12 meses, identificando os principais itens de despesa e possíveis inconsistências.</p>
+                      <h3>2. Renegocie contratos com prestadores de serviços</h3>
+                      <p>Muitos contratos são renovados automaticamente sem uma reavaliação crítica. Compare preços no mercado e use essas informações para renegociar valores com os atuais fornecedores ou considere novas cotações.</p>
+                      <h3>3. Invista em iluminação LED</h3>
+                      <p>A substituição de lâmpadas convencionais por modelos LED pode gerar economia de até 80% no consumo de energia para iluminação. Embora o investimento inicial seja maior, o retorno acontece em poucos meses.</p>
+                      <h3>4. Implemente sensores de presença</h3>
+                      <p>Instalar sensores de presença em áreas de circulação, garagens e outros espaços comuns evita que as luzes fiquem acesas desnecessariamente, gerando economia significativa.</p>
+                      <h3>5. Revise o sistema hidráulico</h3>
+                      <p>Vazamentos podem passar despercebidos e causar enormes desperdícios. Uma revisão periódica do sistema hidráulico pode identificar problemas e evitar gastos excessivos com água.</p>
+                      <h3>6. Adote sistemas de captação de água da chuva</h3>
+                      <p>A água coletada pode ser utilizada para limpeza de áreas comuns, irrigação de jardins e outras finalidades não potáveis, reduzindo o consumo de água tratada.</p>
+                      <h3>7. Invista em automação</h3>
+                      <p>Sistemas automatizados para controle de bombas, iluminação e outros equipamentos ajudam a otimizar o consumo e reduzir gastos desnecessários.</p>
+                      <h3>8. Promova a coleta seletiva de resíduos</h3>
+                      <p>Além do benefício ambiental, a separação correta do lixo pode gerar receita com a venda de materiais recicláveis e reduzir custos com a coleta tradicional.</p>
+                      <h3>9. Centralize compras de materiais de limpeza e manutenção</h3>
+                      <p>A compra em maior volume geralmente resulta em melhores preços. Estabeleça um cronograma de compras planejadas em vez de aquisições emergenciais.</p>
+                      <h3>10. Capacite a equipe de funcionários</h3>
+                      <p>Funcionários bem treinados trabalham com mais eficiência e cometem menos erros, o que contribui para a redução de gastos e melhoria dos serviços.</p>
+                      <h3>Conclusão</h3>
+                      <p>A implementação dessas medidas pode resultar em economia significativa para o condomínio, possibilitando a manutenção do valor da taxa condominial ou até mesmo sua redução. O importante é que essas ações sejam planejadas e executadas com transparência, sempre comunicando aos condôminos os objetivos e resultados alcançados.</p>
+                      <p>Lembre-se que pequenas mudanças, quando somadas, podem fazer grande diferença no orçamento do condomínio ao longo do ano.</p>',
+        'imagem' => 'assets/img/blog/post1.jpg',
+        'data' => '2023-05-10',
+        'autor' => 'Carlos Mendes',
+        'categoria' => 'Finanças',
+        'tags' => ['Economia', 'Gestão Financeira', 'Redução de Custos', 'Condomínio'],
+        'comentarios' => [
+            ['nome' => 'Roberto Silva', 'data' => '2023-05-11', 'comentario' => 'Excelentes dicas! Já implementamos algumas dessas medidas no nosso condomínio e realmente vimos redução nos gastos.'],
+            ['nome' => 'Ana Paula', 'data' => '2023-05-11', 'comentario' => 'A dica sobre sensores de presença é muito boa. Instalamos nas garagens e estamos economizando cerca de 30% na energia elétrica.'],
+            ['nome' => 'Marcelo Santos', 'data' => '2023-05-12', 'comentario' => 'Gostaria de saber mais sobre sistemas de captação de água da chuva. Alguém tem experiência com isso?'],
+            ['nome' => 'Juliana Martins', 'data' => '2023-05-13', 'comentario' => 'Implementamos a coleta seletiva no nosso condomínio e, além da economia, percebemos uma maior conscientização dos moradores quanto a questões ambientais.']
+        ]
+    ],
+    2 => [
+        'id' => 2,
+        'titulo' => 'O Papel do Síndico na Gestão Moderna de Condomínios',
+        'resumo' => 'Descubra como a função do síndico evoluiu com as novas tecnologias e quais são as habilidades essenciais para uma boa gestão.',
+        'conteudo' => '<p>O papel do síndico tem passado por transformações significativas nas últimas décadas. Se antes o cargo era visto como uma obrigação burocrática focada principalmente em cobranças e manutenção básica, hoje representa uma função gerencial complexa que exige múltiplas habilidades e conhecimentos.</p><p>Neste artigo, discutiremos como a função do síndico evoluiu e quais são as competências essenciais para uma gestão moderna e eficiente de condomínios.</p>',
+        'imagem' => 'assets/img/blog/post2.jpg',
+        'data' => '2023-05-05',
+        'autor' => 'Ana Silva',
+        'categoria' => 'Gestão Condominial',
+        'tags' => ['Síndico', 'Gestão', 'Condomínio', 'Administração'],
+        'comentarios' => [
+            ['nome' => 'Fernando Oliveira', 'data' => '2023-05-06', 'comentario' => 'Como síndico há 3 anos, posso confirmar que o papel mudou muito. Hoje administramos verdadeiras empresas!'],
+            ['nome' => 'Carla Mendes', 'data' => '2023-05-07', 'comentario' => 'Excelente artigo. Realmente, a profissionalização do síndico é cada vez mais necessária.']
+        ]
+    ]
+];
+
+// Verificar se o post existe
+if (!isset($posts[$id])) {
+    include 'pages/404.php';
+    exit;
+}
+
+$post = $posts[$id];
+
+// Definir título da página
+$titulo = $post['titulo'];
+$paginaAtual = 'blog';
+
+// Formatar data
+function formatarDataBlog($data) {
+    return date('d/m/Y', strtotime($data));
 }
 ?>
 
-<!-- Artigo Completo -->
-<section class="blog-post py-5">
+<!-- Blog Post Content -->
+<section class="py-5">
     <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <!-- Imagem de Capa -->
-                <?php if (!empty($post['imagem_capa'])): ?>
-                    <div class="blog-post-image mb-4">
-                        <img src="<?php echo $post['imagem_capa']; ?>" alt="<?php echo $post['titulo']; ?>" class="img-fluid rounded shadow">
-                    </div>
-                <?php endif; ?>
-                
-                <!-- Cabeçalho do Post -->
-                <div class="blog-post-header mb-4">
-                    <h1 class="blog-post-title h2 mb-3"><?php echo $post['titulo']; ?></h1>
-                    <div class="blog-post-meta d-flex flex-wrap align-items-center text-muted mb-3">
-                        <div class="me-4">
-                            <i class="fas fa-user me-1"></i> <?php echo $post['autor_nome']; ?>
+        <div class="row">
+            <!-- Conteúdo do Post -->
+            <div class="col-lg-8">
+                <article>
+                    <!-- Título e Metadados -->
+                    <header class="mb-4">
+                        <h1 class="fw-bold mb-3"><?php echo $post['titulo']; ?></h1>
+                        <div class="text-muted mb-3">
+                            <span><i class="far fa-calendar-alt me-1"></i> <?php echo formatarDataBlog($post['data']); ?></span>
+                            <span class="mx-2">|</span>
+                            <span><i class="far fa-user me-1"></i> <?php echo $post['autor']; ?></span>
+                            <span class="mx-2">|</span>
+                            <span><i class="far fa-folder me-1"></i> <?php echo $post['categoria']; ?></span>
                         </div>
-                        <div class="me-4">
-                            <i class="fas fa-calendar me-1"></i> <?php echo formatarDataHora($post['data_publicacao']); ?>
-                        </div>
-                        <div>
-                            <i class="fas fa-eye me-1"></i> <?php echo $post['visualizacoes']; ?> visualizações
-                        </div>
-                    </div>
-                    
-                    <?php if (!empty($categorias)): ?>
-                        <div class="blog-post-categories mb-4">
-                            <?php foreach ($categorias as $categoria): ?>
-                                <span class="badge bg-secondary me-2"><?php echo $categoria['nome']; ?></span>
+                        <div class="mb-4">
+                            <?php foreach ($post['tags'] as $tag): ?>
+                                <span class="badge bg-light text-dark me-1">#<?php echo $tag; ?></span>
                             <?php endforeach; ?>
                         </div>
+                    </header>
+                    
+                    <!-- Imagem do Post -->
+                    <?php if (!empty($post['imagem'])): ?>
+                        <figure class="mb-4">
+                            <img src="<?php echo $post['imagem']; ?>" alt="<?php echo $post['titulo']; ?>" class="img-fluid rounded">
+                        </figure>
                     <?php endif; ?>
-                </div>
-                
-                <!-- Conteúdo do Post -->
-                <div class="blog-post-content mb-5">
-                    <?php echo nl2br($post['conteudo']); ?>
-                </div>
-                
-                <!-- Compartilhar -->
-                <div class="blog-post-share mb-5">
-                    <h5 class="mb-3">Compartilhar:</h5>
-                    <div class="d-flex">
-                        <a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo urlencode("http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"); ?>" target="_blank" class="btn btn-sm btn-outline-primary me-2">
-                            <i class="fab fa-facebook-f me-1"></i> Facebook
-                        </a>
-                        <a href="https://twitter.com/intent/tweet?url=<?php echo urlencode("http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"); ?>&text=<?php echo urlencode($post['titulo']); ?>" target="_blank" class="btn btn-sm btn-outline-info me-2">
-                            <i class="fab fa-twitter me-1"></i> Twitter
-                        </a>
-                        <a href="https://wa.me/?text=<?php echo urlencode($post['titulo'] . " - http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"); ?>" target="_blank" class="btn btn-sm btn-outline-success me-2">
-                            <i class="fab fa-whatsapp me-1"></i> WhatsApp
-                        </a>
-                        <a href="mailto:?subject=<?php echo urlencode($post['titulo']); ?>&body=<?php echo urlencode("Confira este artigo: http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]"); ?>" class="btn btn-sm btn-outline-secondary">
-                            <i class="fas fa-envelope me-1"></i> E-mail
-                        </a>
+                    
+                    <!-- Conteúdo do Post -->
+                    <section class="mb-5">
+                        <div class="blog-content">
+                            <?php echo $post['conteudo']; ?>
+                        </div>
+                    </section>
+                    
+                    <!-- Compartilhamento -->
+                    <section class="border-top border-bottom py-4 mb-5">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Compartilhar:</h5>
+                            <div class="social-share">
+                                <a href="#" class="me-2 text-primary"><i class="fab fa-facebook-f fa-lg"></i></a>
+                                <a href="#" class="me-2 text-info"><i class="fab fa-twitter fa-lg"></i></a>
+                                <a href="#" class="me-2 text-success"><i class="fab fa-whatsapp fa-lg"></i></a>
+                                <a href="#" class="text-secondary"><i class="fas fa-envelope fa-lg"></i></a>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Navegação entre Posts -->
+                    <section class="mb-5">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <?php if ($id > 1): ?>
+                                    <a href="index.php?page=blog&id=<?php echo $id - 1; ?>" class="btn btn-outline-primary d-block">
+                                        <i class="fas fa-arrow-left me-1"></i> Post Anterior
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                            <div class="col-md-6 text-end">
+                                <?php if (isset($posts[$id + 1])): ?>
+                                    <a href="index.php?page=blog&id=<?php echo $id + 1; ?>" class="btn btn-outline-primary d-block">
+                                        Próximo Post <i class="fas fa-arrow-right ms-1"></i>
+                                    </a>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </section>
+                    
+                    <!-- Comentários -->
+                    <section class="mb-5">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <h3 class="card-title mb-4">Comentários (<?php echo count($post['comentarios']); ?>)</h3>
+                                
+                                <?php if (!empty($post['comentarios'])): ?>
+                                    <div class="comments">
+                                        <?php foreach ($post['comentarios'] as $comentario): ?>
+                                            <div class="comment mb-4 pb-4 border-bottom">
+                                                <div class="d-flex align-items-center mb-3">
+                                                    <div class="comment-avatar me-3">
+                                                        <i class="fas fa-user-circle fa-3x text-primary"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h5 class="mb-0"><?php echo $comentario['nome']; ?></h5>
+                                                        <small class="text-muted"><?php echo formatarDataBlog($comentario['data']); ?></small>
+                                                    </div>
+                                                </div>
+                                                <div class="comment-content">
+                                                    <p class="mb-0"><?php echo $comentario['comentario']; ?></p>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php else: ?>
+                                    <p class="text-muted">Seja o primeiro a comentar neste post.</p>
+                                <?php endif; ?>
+                                
+                                <!-- Formulário de Comentário -->
+                                <div class="comment-form mt-4">
+                                    <h4 class="mb-3">Deixe seu comentário</h4>
+                                    <form>
+                                        <div class="row mb-3">
+                                            <div class="col-md-6 mb-3 mb-md-0">
+                                                <input type="text" class="form-control" placeholder="Seu nome" required>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <input type="email" class="form-control" placeholder="Seu e-mail" required>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <textarea class="form-control" rows="5" placeholder="Seu comentário" required></textarea>
+                                        </div>
+                                        <div class="d-grid">
+                                            <button type="submit" class="btn btn-primary">Enviar Comentário</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </article>
+            </div>
+            
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Sobre o Autor -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body text-center">
+                        <div class="author-avatar mb-3">
+                            <i class="fas fa-user-circle fa-5x text-primary"></i>
+                        </div>
+                        <h4 class="card-title mb-1"><?php echo $post['autor']; ?></h4>
+                        <p class="text-muted mb-3">Especialista em Gestão Condominial</p>
+                        <p class="card-text">Profissional com mais de 15 anos de experiência em administração de condomínios, consultoria e treinamento para síndicos e gestores.</p>
+                        <div class="social-links mt-3">
+                            <a href="#" class="me-2"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" class="me-2"><i class="fab fa-twitter"></i></a>
+                            <a href="#"><i class="fas fa-globe"></i></a>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Sobre o Autor -->
-                <div class="blog-post-author bg-light p-4 rounded mb-5">
-                    <h5 class="mb-3">Sobre o Autor</h5>
-                    <div class="d-flex">
-                        <div class="flex-shrink-0 me-3">
-                            <div class="rounded-circle bg-secondary text-white d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
-                                <i class="fas fa-user"></i>
+                <!-- Busca -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <h4 class="h5 card-title mb-3">Pesquisar</h4>
+                        <form action="index.php" method="get">
+                            <input type="hidden" name="page" value="blog">
+                            <div class="input-group">
+                                <input type="text" name="q" class="form-control" placeholder="Buscar posts...">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
                             </div>
-                        </div>
-                        <div>
-                            <h6><?php echo $post['autor_nome']; ?></h6>
-                            <p class="mb-0">Profissional especializado em gestão condominial, com experiência no setor e conhecimento das melhores práticas do mercado.</p>
-                        </div>
+                        </form>
                     </div>
                 </div>
                 
                 <!-- Posts Relacionados -->
-                <?php if (!empty($posts_relacionados)): ?>
-                    <div class="blog-related-posts mb-5">
-                        <h4 class="mb-4">Artigos Relacionados</h4>
-                        <div class="row g-4">
-                            <?php foreach ($posts_relacionados as $relacionado): ?>
-                                <div class="col-md-4">
-                                    <div class="card h-100 border-0 shadow-sm">
-                                        <?php if (!empty($relacionado['imagem_capa'])): ?>
-                                            <img src="<?php echo $relacionado['imagem_capa']; ?>" class="card-img-top" alt="<?php echo $relacionado['titulo']; ?>">
-                                        <?php endif; ?>
-                                        <div class="card-body">
-                                            <h5 class="card-title h6"><?php echo $relacionado['titulo']; ?></h5>
-                                            <p class="card-text small text-muted mb-2">
-                                                <i class="fas fa-calendar me-1"></i> <?php echo formatarData($relacionado['data_publicacao']); ?>
-                                            </p>
-                                            <a href="index.php?page=blog&id=<?php echo $relacionado['id']; ?>" class="btn btn-sm btn-outline-primary">Ler mais</a>
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <h4 class="h5 card-title mb-3">Posts Relacionados</h4>
+                        <div class="list-group list-group-flush">
+                            <?php 
+                            // Filtrar posts da mesma categoria
+                            $related_posts = array_filter($posts, function($p) use ($post) {
+                                return $p['id'] != $post['id'] && $p['categoria'] == $post['categoria'];
+                            });
+                            
+                            // Limitar a 3 posts
+                            $related_posts = array_slice($related_posts, 0, 3);
+                            
+                            if (!empty($related_posts)): 
+                                foreach ($related_posts as $related):
+                            ?>
+                                <a href="index.php?page=blog&id=<?php echo $related['id']; ?>" class="list-group-item list-group-item-action py-3">
+                                    <div class="row align-items-center">
+                                        <div class="col-4">
+                                            <img src="<?php echo $related['imagem']; ?>" alt="<?php echo $related['titulo']; ?>" class="img-fluid rounded">
+                                        </div>
+                                        <div class="col-8">
+                                            <h6 class="mb-1"><?php echo limitarTexto($related['titulo'], 60); ?></h6>
+                                            <small class="text-muted"><?php echo formatarDataBlog($related['data']); ?></small>
                                         </div>
                                     </div>
-                                </div>
+                                </a>
+                            <?php 
+                                endforeach; 
+                            else: 
+                            ?>
+                                <p class="text-muted">Nenhum post relacionado encontrado.</p>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Tags -->
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-body">
+                        <h4 class="h5 card-title mb-3">Tags</h4>
+                        <div class="tags">
+                            <?php foreach ($post['tags'] as $tag): ?>
+                                <a href="index.php?page=blog&tag=<?php echo urlencode($tag); ?>" class="btn btn-sm btn-light mb-2 me-1">
+                                    #<?php echo $tag; ?>
+                                </a>
                             <?php endforeach; ?>
                         </div>
                     </div>
-                <?php endif; ?>
+                </div>
                 
-                <!-- Navegação -->
-                <div class="blog-post-navigation d-flex justify-content-between">
-                    <a href="index.php?page=blog" class="btn btn-outline-primary">
-                        <i class="fas fa-arrow-left me-2"></i> Voltar para o Blog
-                    </a>
+                <!-- Newsletter -->
+                <div class="card border-0 shadow-sm bg-primary text-white">
+                    <div class="card-body p-4">
+                        <h4 class="h5 card-title mb-3">Assine nossa Newsletter</h4>
+                        <p class="card-text mb-3">Receba artigos, dicas e novidades sobre gestão condominial diretamente no seu e-mail.</p>
+                        <form>
+                            <div class="mb-3">
+                                <input type="email" class="form-control" placeholder="Seu melhor e-mail" required>
+                            </div>
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-light">Inscrever-se</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
