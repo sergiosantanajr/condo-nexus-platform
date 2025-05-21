@@ -1,98 +1,28 @@
 
-# Nova Alternativa - Sistema de Gestão de Condomínios
+# Nova Alternativa - Sistema de Gestão de Condomínios (PHP)
 
-Este projeto é uma aplicação web desenvolvida com React para gestão de condomínios.
+Este projeto é uma aplicação web desenvolvida com PHP puro para gestão de condomínios, compatível com servidores Nginx/PHP tradicionais.
 
-## ⚠️ IMPORTANTE: Este é um projeto React moderno
+## 📋 Instalação Simples
 
-Este projeto utiliza tecnologias web modernas (React, Vite, etc.) e **NÃO É** uma aplicação PHP tradicional. Para executá-lo corretamente, você precisa seguir as instruções abaixo.
-
-## 📋 Requisitos
-
-- Node.js versão 16.0 ou superior
-- NPM ou Yarn
-
-## 🚀 Instalação
-
-1. Primeiro, instale as dependências:
-
-```bash
-npm install
-# ou
-yarn install
-```
-
-2. Execute o projeto em modo de desenvolvimento:
-
-```bash
-npm run dev
-# ou
-yarn dev
-```
-
-3. Para compilar para produção:
-
-```bash
-npm run build
-# ou
-yarn build
-```
-
-4. Para servir a versão de produção:
-
-```bash
-npm run preview
-# ou
-yarn preview
-```
+1. Faça o upload de todos os arquivos para o diretório raiz do seu servidor web (public_html, www, htdocs, etc.)
+2. Acesse o site pelo navegador. Você será automaticamente redirecionado para a página de instalação
+3. Siga as instruções na tela para configurar o banco de dados e criar o usuário administrador
 
 ## 📂 Estrutura do Projeto
 
-- `/src` - Código fonte da aplicação
-  - `/components` - Componentes React reutilizáveis
-  - `/pages` - Páginas da aplicação
-  - `/hooks` - Custom hooks
-  - `/lib` - Funções utilitárias
+- `/` - Diretório raiz com arquivos principais
+- `/assets` - Arquivos CSS, JavaScript e imagens
+- `/config` - Arquivos de configuração do sistema
+- `/includes` - Funções e componentes reutilizáveis 
+- `/pages` - Páginas do site
 
-## 🌐 Deploy em Servidor Web Tradicional (Apache/Nginx)
+## 🔧 Requisitos do Servidor
 
-Se você deseja hospedar este site em um servidor Apache ou Nginx tradicional:
-
-1. Execute `npm run build` para gerar os arquivos estáticos
-2. Copie todo o conteúdo da pasta `dist` para a raiz do seu servidor web
-3. Configure seu servidor para servir `index.html` para todas as rotas (necessário para SPA - Single Page Application)
-
-### Configuração para Nginx:
-
-```nginx
-server {
-    listen 80;
-    server_name seu-dominio.com;
-    root /caminho/para/pasta/dist;
-    index index.html;
-    
-    location / {
-        try_files $uri $uri/ /index.html;
-    }
-}
-```
-
-### Configuração para Apache:
-
-Crie um arquivo `.htaccess` na raiz do seu site:
-
-```apache
-<IfModule mod_rewrite.c>
-  RewriteEngine On
-  RewriteBase /
-  RewriteRule ^index\.html$ - [L]
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.html [L]
-</IfModule>
-```
-
-Certifique-se de que o módulo `mod_rewrite` esteja habilitado no seu servidor Apache.
+- PHP 7.4 ou superior
+- MySQL 5.7 ou superior
+- Servidor Web (Apache, Nginx, etc.)
+- Extensão PDO habilitada
 
 ## 📱 Funcionalidades
 
@@ -102,6 +32,28 @@ Certifique-se de que o módulo `mod_rewrite` esteja habilitado no seu servidor A
 - Painel administrativo para gestão de conteúdo
 - Sistema de tickets para solicitações e reclamações
 
+## 💼 Uso do Sistema
+
+**Painel Administrativo:**
+- Acesse `/admin` para gerenciar o sistema 
+- Use as credenciais criadas durante a instalação
+
+**Portal do Cliente:**
+- Acesse `/portal` para o acesso de condôminos
+- Novos usuários podem se cadastrar e terão status "pendente" até aprovação
+
 ## 📄 Licença
 
 Este projeto é proprietário e seu uso não é permitido sem autorização expressa.
+
+## 🔐 Segurança
+
+O sistema inclui:
+- Proteção contra SQL Injection
+- Senhas armazenadas com hash seguro
+- Validação de formulários
+- Sanitização de entradas
+
+## 📧 Suporte
+
+Para suporte, entre em contato através do formulário no site ou diretamente pelo e-mail configurado na instalação.

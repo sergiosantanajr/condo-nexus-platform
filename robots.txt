@@ -1,0 +1,10 @@
+
+User-agent: *
+Allow: /
+
+Disallow: /install.php
+Disallow: /config/
+Disallow: /includes/
+Disallow: /admin/
+
+Sitemap: https://seudominio.com/sitemap.xml
