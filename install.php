@@ -73,7 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             file_put_contents('config/database.php', $config_content);
             
-            $success = 'Sistema instalado com sucesso! <a href="index.php">Clique aqui</a> para acessar o site.';
+            $success = 'Sistema instalado com sucesso! <a href="index.php" class="alert-link">Clique aqui</a> para acessar o site.';
         } catch (PDOException $e) {
             $error = 'Erro ao conectar ao banco de dados: ' . $e->getMessage();
         }
@@ -87,76 +87,108 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Instalação - Nova Alternativa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body class="install-page">
-    <div class="install-container">
-        <div class="install-header">
-            <h1>Nova Alternativa</h1>
-            <h2>Instalação do Sistema</h2>
+    <div class="container">
+        <div class="install-container">
+            <div class="install-header">
+                <div class="mb-4">
+                    <i class="fas fa-cogs fa-3x text-primary"></i>
+                </div>
+                <h1>Nova Alternativa</h1>
+                <p class="lead">Assistente de Instalação do Sistema</p>
+            </div>
+            
+            <?php if (!empty($error)): ?>
+                <div class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle me-2"></i><?php echo $error; ?>
+                </div>
+            <?php endif; ?>
+            
+            <?php if (!empty($success)): ?>
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i><?php echo $success; ?>
+                </div>
+            <?php else: ?>
+            
+            <form method="post" action="">
+                <div class="install-section">
+                    <h3><i class="fas fa-database me-2"></i>Configurações do Banco de Dados</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="db_host">Servidor MySQL:</label>
+                                <input type="text" class="form-control" id="db_host" name="db_host" value="localhost" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="db_name">Nome do Banco de Dados:</label>
+                                <input type="text" class="form-control" id="db_name" name="db_name" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="db_user">Usuário MySQL:</label>
+                                <input type="text" class="form-control" id="db_user" name="db_user" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="db_pass">Senha MySQL:</label>
+                                <input type="password" class="form-control" id="db_pass" name="db_pass">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="install-section">
+                    <h3><i class="fas fa-globe me-2"></i>Configurações do Site</h3>
+                    <div class="form-group">
+                        <label for="site_nome">Nome do Site:</label>
+                        <input type="text" class="form-control" id="site_nome" name="site_nome" value="Nova Alternativa" required>
+                    </div>
+                </div>
+                
+                <div class="install-section">
+                    <h3><i class="fas fa-user-shield me-2"></i>Conta de Administrador</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="admin_email">E-mail do Administrador:</label>
+                                <input type="email" class="form-control" id="admin_email" name="admin_email" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="admin_senha">Senha do Administrador:</label>
+                                <input type="password" class="form-control" id="admin_senha" name="admin_senha" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary btn-lg">
+                        <i class="fas fa-check me-2"></i>Instalar Sistema
+                    </button>
+                </div>
+            </form>
+            
+            <?php endif; ?>
         </div>
         
-        <?php if (!empty($error)): ?>
-            <div class="alert alert-danger"><?php echo $error; ?></div>
-        <?php endif; ?>
-        
-        <?php if (!empty($success)): ?>
-            <div class="alert alert-success"><?php echo $success; ?></div>
-        <?php else: ?>
-        
-        <form method="post" action="">
-            <div class="install-section">
-                <h3>Configurações do Banco de Dados</h3>
-                <div class="form-group">
-                    <label for="db_host">Servidor MySQL:</label>
-                    <input type="text" id="db_host" name="db_host" value="localhost" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="db_name">Nome do Banco de Dados:</label>
-                    <input type="text" id="db_name" name="db_name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="db_user">Usuário MySQL:</label>
-                    <input type="text" id="db_user" name="db_user" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="db_pass">Senha MySQL:</label>
-                    <input type="password" id="db_pass" name="db_pass">
-                </div>
-            </div>
-            
-            <div class="install-section">
-                <h3>Configurações do Site</h3>
-                <div class="form-group">
-                    <label for="site_nome">Nome do Site:</label>
-                    <input type="text" id="site_nome" name="site_nome" value="Nova Alternativa" required>
-                </div>
-            </div>
-            
-            <div class="install-section">
-                <h3>Conta de Administrador</h3>
-                <div class="form-group">
-                    <label for="admin_email">E-mail do Administrador:</label>
-                    <input type="email" id="admin_email" name="admin_email" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="admin_senha">Senha do Administrador:</label>
-                    <input type="password" id="admin_senha" name="admin_senha" required>
-                </div>
-            </div>
-            
-            <div class="form-group">
-                <button type="submit" class="btn btn-primary">Instalar Sistema</button>
-            </div>
-        </form>
-        
-        <?php endif; ?>
+        <div class="text-center mt-4 text-white">
+            <p>&copy; <?php echo date('Y'); ?> Nova Alternativa. Todos os direitos reservados.</p>
+        </div>
     </div>
     
-    <script src="assets/js/scripts.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

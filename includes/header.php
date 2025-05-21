@@ -16,8 +16,8 @@ $paginaAtual = $page ?? 'home';
     <link rel="icon" href="assets/img/favicon.ico">
     
     <!-- CSS -->
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
@@ -33,7 +33,7 @@ $paginaAtual = $page ?? 'home';
     <!-- Cabeçalho -->
     <header class="header">
         <div class="container">
-            <nav class="navbar navbar-expand-lg navbar-light">
+            <nav class="navbar navbar-expand-lg">
                 <a class="navbar-brand" href="index.php">
                     <?php if (!empty($config['logo_url'])): ?>
                         <img src="<?php echo $config['logo_url']; ?>" alt="<?php echo $config['nome_site']; ?>" height="40">
@@ -61,7 +61,7 @@ $paginaAtual = $page ?? 'home';
                             <a class="nav-link" href="index.php?page=contato">Contato</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link btn btn-outline-primary btn-sm" href="index.php?page=portal">Área do Cliente</a>
+                            <a class="nav-link btn btn-primary text-white rounded-pill px-4" href="index.php?page=portal">Área do Cliente</a>
                         </li>
                     </ul>
                 </div>
